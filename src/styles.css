@@ -158,3 +158,67 @@ pre.pms{margin:0;white-space:pre-wrap}
 button.b:disabled{opacity:.5;cursor:not-allowed}
 .board{grid-template-columns:repeat(6,minmax(118px,1fr))}
 .colk h4{gap:6px}
+
+/* View switch */
+.controls{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:end}
+.seg{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+.seg button{all:unset;cursor:pointer;padding:7px 14px;border-radius:7px;font-weight:700;font-size:14px;color:var(--muted)}
+.seg button.on{background:var(--accent);color:var(--surface)}
+.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Patient and split layouts */
+.patient-layout{display:grid;grid-template-columns:minmax(0,390px) minmax(0,1fr);gap:28px;align-items:start;justify-content:center}
+.split-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,390px);gap:20px;align-items:start}
+@media (max-width:900px){.patient-layout,.split-layout{grid-template-columns:minmax(0,1fr)}.device{margin-inline:auto}}
+.split-layout .board{grid-template-columns:repeat(3,minmax(0,1fr))}
+
+/* Phone */
+.device{width:100%;max-width:390px;border:10px solid var(--ink);border-radius:40px;background:var(--surface);overflow:hidden;box-shadow:0 18px 40px -24px rgba(4,17,89,.45)}
+.device-bar{display:flex;justify-content:space-between;align-items:center;padding:8px 22px 6px;font:600 12px var(--f-body);color:var(--ink);background:var(--surface)}
+.device-notch{width:90px;height:22px;border-radius:12px;background:var(--ink)}
+.device-screen{height:720px;overflow-y:auto;background:var(--sunk)}
+.pt-pad{padding:18px 16px 24px;display:grid;gap:14px}
+.pt-center{text-align:center;justify-items:center;padding-top:80px}
+.pt-thread-head{display:flex;align-items:center;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.bubble{background:var(--surface);border:1px solid var(--line);border-radius:18px 18px 18px 6px;padding:10px 14px;font-size:14px;max-width:88%}
+.bubble.ok{background:var(--good-soft);border-color:transparent}
+.pt-time{font-size:11px;color:var(--muted);margin-top:-8px;padding-left:6px}
+.pt-empty{display:grid;gap:12px;font-size:14px;color:var(--muted);padding-top:20px}
+.linklike{all:unset;cursor:pointer;color:var(--accent);font-weight:700;text-decoration:underline;text-underline-offset:2px}
+.linklike:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.linklike.center{justify-self:center;font-size:14px;color:var(--muted)}
+button.b.full{width:100%}
+.pt-kicker{margin:0;font:600 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.pt-h{margin:0;font:700 22px/1.2 var(--f-display);text-wrap:balance}
+.pt-p{margin:0;font-size:15px;color:var(--muted)}
+.pt-chips{display:grid;gap:8px}
+.pt-chip{all:unset;cursor:pointer;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:15px;font-weight:700}
+.pt-chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pt-chip .chev{margin-left:auto;color:var(--muted);font-size:20px;line-height:1}
+.pt-card{background:var(--surface);border-radius:12px;padding:14px;display:grid;gap:6px;font-size:14px}
+.pt-card.ok{background:var(--good-soft)}
+.pt-visits{margin:0;padding-left:20px;color:var(--muted);display:grid;gap:2px}
+.pt-row{display:flex;justify-content:space-between;gap:12px;font-variant-numeric:tabular-nums;color:var(--muted)}
+.pt-row.total{color:var(--ink);font:700 18px var(--f-display);border-top:1px solid var(--line);padding-top:8px;margin-top:2px}
+.pt-note{margin:0;font-size:12px;color:var(--muted)}
+.pt-actions{display:grid;gap:10px}
+.pt-slots{display:grid;gap:8px}
+.pt-radios{display:grid;gap:8px}
+.pt-radio{display:flex;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:15px;cursor:pointer}
+.pt-radio.sel{border-color:var(--accent);background:var(--accent-soft)}
+.pt-radio input{accent-color:var(--accent);width:18px;height:18px}
+.pt-big-check{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:var(--good-soft);color:var(--good);font-size:30px;font-weight:700}
+.pt-big-check.soft{background:var(--accent-soft);color:var(--accent)}
+
+/* Behind the scenes */
+.bts-status{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding:10px 12px;border-radius:8px;background:var(--sunk)}
+.bts-log{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.bts-log li{display:grid;grid-template-columns:48px 1fr;gap:10px;font-size:14px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.bts-log li.note{display:block;border:none}
+
+/* Why patients wait */
+.reasons{display:grid;gap:8px}
+.reason{display:grid;grid-template-columns:minmax(0,190px) 1fr 28px;gap:12px;align-items:center;font-size:14px}
+.reason-bar{height:10px;border-radius:5px;background:var(--sunk);overflow:hidden}
+.reason-bar span{display:block;height:100%;background:var(--accent);opacity:.55}
+.reason b{text-align:right;font-variant-numeric:tabular-nums}

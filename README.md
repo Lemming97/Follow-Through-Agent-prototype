@@ -15,13 +15,29 @@ Out of 100 lesions detected on an X-ray, only 18 end up treated, and 55 are lost
 | 5. Book the visits | Assistant | Slots that respect the treatment sequence (fillings first, crown visits two weeks apart). |
 | 6. Practice overview | Team | A live board of every open case, plus the pilot metrics. |
 
+## The patient side
+
+Use the switch at the top to change view:
+
+- **Practice**: the six steps above, as the dentist and assistant see them.
+- **Patient**: Mrs Martin's phone, from the SMS link to a booked visit, with a "Behind the scenes" log of what the agent does as she taps.
+- **Side by side**: the practice board next to her phone. Everything she does lands on Camille's board live.
+
+On her phone she can:
+
+- Tap a tooth to see what was found, what happens if she waits, and what the treatment involves.
+- See what it costs: treatment, social security, mutuelle, and her share.
+- Accept and ask for a date. Camille gets a task to confirm it.
+- Ask a question. The agent never answers clinical questions; it books a call back.
+- Say "Not now" and why. The reason is counted on the practice board under "Why patients wait", which fills a gap in today's data: nobody knows why quotes are not accepted.
+
 ## What is real and what is simulated
 
 Real code:
 - **Quote engine** (`src/domain/quote.js`): prices each act from the catalogue in `src/domain/acts.js`, with unit tests.
 - **Visit sequencing**: derives the visits from whatever plan the dentist validates.
 - **PMS adapters** (`src/pms/adapters.js`): one agent brain, a thin adapter per PMS. PMS B writes and reads back; PMS A produces a copy pack.
-- **Case state** (`src/domain/cases.js`): one reducer drives every screen and the practice board.
+- **Case state** (`src/domain/cases.js`): one reducer drives every screen, the practice board and the patient's phone, with tests in `cases.test.js`.
 
 Simulated: the PMS writes, SMS and email sending, and the X-ray analysis.
 
@@ -45,6 +61,7 @@ Requires Node 18 or later.
 src/
   domain/      acts and fees, quote engine and tests, case state
   pms/         PMS adapters (B integrated, A copy pack)
+  patient/     the patient's phone experience
   components/  journey rail, X-ray
   screens/     one file per journey step
   App.jsx      layout, PMS switch, step routing

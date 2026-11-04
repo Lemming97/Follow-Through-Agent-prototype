@@ -62,7 +62,21 @@ export const initialState = {
   cases: [martin, ...others],
   tasks: [],
   toast: null,
+  view: 'practice', // practice | patient | split
+  log: [],
+  // Why patients wait, last 30 days. Seeded for the demo; the patient's "Not now" answer adds to it.
+  reasons: { cost: 5, think: 3, timing: 2, second: 1 },
 };
+
+export const REASONS = {
+  cost: 'The cost',
+  think: 'I want to think about it',
+  timing: 'Not a good time',
+  second: 'I want a second opinion',
+};
+
+const stamp = () => new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+const withLog = (state, text) => ({ ...state, log: [{ id: state.log.length + 1, at: stamp(), text }, ...state.log] });
 
 const updateMartin = (state, fn) => ({
   ...state,
@@ -91,8 +105,10 @@ export function reducer(state, action) {
       return { ...updateMartin(state, () => ({ status: 'to_approve', note: 'Plan validated 09:41' })), step: 1, toast: 'Plan validated by Dr Lefèvre' };
     case 'PMS_DONE':
       return updateMartin(state, () => ({ note: state.pms === 'B' ? 'Written to PMS B, verified' : 'Copy pack pasted in PMS A' }));
+    case 'SET_VIEW':
+      return { ...state, view: action.view };
     case 'SEND_QUOTE':
-      return {
+      return withLog({
         ...updateMartin(state, (c) => ({
           status: 'quote_sent',
           note: 'Day 0 · sent',
@@ -102,19 +118,49 @@ export function reducer(state, action) {
             { day: 'Day 3', text: 'Reminder sent, pre approved template', done: true },
           ],
         })),
-        step: 3,
+        step: action.from === 'patient' ? state.step : 3,
         toast: 'Quote sent to Mrs Martin',
-      };
+      }, 'Sent the plan and quote to Mrs Martin by SMS and email');
     case 'ASK_QUESTION':
-      return {
+      return withLog({
         ...updateMartin(state, (c) => ({
           status: 'call_needed',
           note: 'Asked a question · call back',
           timeline: [...c.timeline, { day: 'Day 4', text: 'Asked a question. Call back task created for Camille', done: true }],
         })),
-        tasks: [...state.tasks, { id: Date.now(), text: 'Call Mrs Martin back about her treatment plan', due: 'Today' }],
+        tasks: [...state.tasks, { id: Date.now(), text: `Call Mrs Martin back: question about ${action.topic || 'her treatment plan'}`, due: 'Today, 14:00 to 16:00' }],
         toast: 'Camille will call you back today',
-      };
+      }, `Question about ${action.topic || 'the plan'}: no clinical answer from the agent, call back task created for Camille`);
+    case 'PATIENT_REQUEST_SLOT':
+      return withLog({
+        ...updateMartin(state, (c) => ({
+          status: 'accepted',
+          note: `Asked for ${action.slot}`,
+          requestedSlot: action.slot,
+          timeline: [...c.timeline, { day: 'Day 4', text: `Accepted online and asked for ${action.slot}`, done: true }],
+        })),
+        tasks: [...state.tasks.filter((t) => !t.text.includes('Mrs Martin')), { id: Date.now(), text: `Confirm Mrs Martin's slot: ${action.slot}`, due: 'Within the hour' }],
+        toast: 'Mrs Martin accepted and picked a slot',
+      }, `Quote accepted. Reminders stopped, slot request sent to Camille to confirm in ${action.pms}`);
+    case 'PATIENT_NOT_NOW':
+      return withLog({
+        ...updateMartin(state, (c) => ({
+          note: `Not now · ${REASONS[action.reason].toLowerCase()}`,
+          warn: true,
+          timeline: [...c.timeline, { day: 'Day 4', text: `Said not now: ${REASONS[action.reason].toLowerCase()}`, done: true }],
+        })),
+        reasons: { ...state.reasons, [action.reason]: state.reasons[action.reason] + 1 },
+        tasks: action.reason === 'cost' && !action.patientShare
+          ? [...state.tasks, { id: Date.now(), text: 'Call Mrs Martin: she thinks it is too expensive, but her mutuelle covers it all', due: 'Today' }]
+          : state.tasks,
+        toast: 'Answer recorded',
+      }, action.reason === 'cost'
+        ? action.patientShare > 0
+          ? 'Reason logged: cost. Day 10 reminder will offer payment in 3 instalments'
+          : 'Reason logged: cost, but she has nothing to pay. Call back task: explain her mutuelle covers it'
+        : action.reason === 'second'
+          ? 'Reason logged: second opinion. Agent will send her X-ray and report so she can share them'
+          : `Reason logged: ${REASONS[action.reason].toLowerCase()}. Day 10 reminder kept`);
     case 'ACCEPT':
       return {
         ...updateMartin(state, (c) => ({
@@ -127,15 +173,16 @@ export function reducer(state, action) {
         toast: 'Mrs Martin accepted the quote',
       };
     case 'BOOK':
-      return {
+      return withLog({
         ...updateMartin(state, () => ({ status: 'booked', note: `Visit 1 · ${action.slot}`, slot: action.slot })),
+        tasks: state.tasks.filter((t) => !t.text.includes('Mrs Martin')),
         step: 5,
         toast: `Visit 1 booked for ${action.slot}. Confirmation sent.`,
-      };
+      }, `Visit 1 confirmed for ${action.slot}. Confirmation SMS sent, reminder set for the day before`);
     case 'TOAST_CLEAR':
       return { ...state, toast: null };
     case 'RESET':
-      return initialState;
+      return { ...initialState, view: state.view, pms: state.pms };
     default:
       return state;
   }
