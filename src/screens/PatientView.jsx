@@ -2,6 +2,7 @@ import React from 'react';
 import Xray from '../components/Xray.jsx';
 import { buildQuote, euro } from '../domain/quote.js';
 import { ACTS } from '../domain/acts.js';
+import { has } from '../domain/versions.js';
 
 const plainWords = (p) => {
   const fam = ACTS[p.act].family;
@@ -10,12 +11,13 @@ const plainWords = (p) => {
   return null;
 };
 
-const LATER = [
-  { day: 'Day 10', text: 'Second reminder, mentions the crown risk' },
-  { day: 'Day 14', text: "Added to Camille's call list with a call script" },
+const later = (version) => [
+  { day: 'Day 10', text: version === 0 ? 'Second reminder, sent by Léa by hand' : has(version, 'tailoredFollowUp') ? 'Second reminder, tailored to why she waits' : 'Second reminder, mentions the crown risk' },
+  { day: 'Day 14', text: has(version, 'voice') ? 'AI voice call to Mrs Martin, hands over to Camille if she has questions' : "Added to Camille's call list with a call script" },
 ];
 
-export default function PatientView({ state, patient, pms, dispatch }) {
+export default function PatientView({ state, patient, pms, version, dispatch }) {
+  const LATER = later(version);
   const q = buildQuote(patient.plan);
   const items = patient.plan.map(plainWords).filter(Boolean);
   const timeline = patient.timeline.length
@@ -42,7 +44,7 @@ export default function PatientView({ state, patient, pms, dispatch }) {
         </div>
 
         <section className="panel">
-          <div className="ptitle"><h3>Follow up, run by the agent</h3><span className="tag agent">Automatic</span></div>
+          <div className="ptitle"><h3>{version === 0 ? 'Follow up, run by Léa' : 'Follow up, run by the agent'}</h3><span className={`tag ${version === 0 ? '' : 'agent'}`}>{version === 0 ? 'By hand' : 'Automatic'}</span></div>
           <ol className="tl">
             {timeline.map((t, i) => <li key={i} className={t.done ? 'ok' : ''}><span className="d">{t.day}</span><span className="m" /><span>{t.text}</span></li>)}
             {!decided && <li className="now"><span className="d">Now</span><span className="m" /><span><b>{asked ? 'Waiting for Camille to call back' : 'Waiting for her answer'}</b></span></li>}

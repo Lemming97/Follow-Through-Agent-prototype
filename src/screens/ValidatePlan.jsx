@@ -2,8 +2,11 @@ import React from 'react';
 import Xray from '../components/Xray.jsx';
 import { ACTS, OPTIONS } from '../domain/acts.js';
 import { visitPlan } from '../domain/quote.js';
+import { has } from '../domain/versions.js';
 
-export default function ValidatePlan({ patient, pms, dispatch }) {
+export default function ValidatePlan({ patient, pms, version, dispatch }) {
+  const agent = has(version, 'agent');
+  const monitored = patient.plan.filter((p) => p.act === 'monitor');
   const visits = visitPlan(patient.plan);
   const changed = (p) => (p.kind === 'caries' ? !p.act.startsWith('comp') : p.act !== 'crownZr');
   return (
@@ -22,7 +25,7 @@ export default function ValidatePlan({ patient, pms, dispatch }) {
         </section>
 
         <section className="panel agent">
-          <div className="ptitle"><h3>Draft treatment plan</h3><span className="tag agent">Agent draft</span></div>
+          <div className="ptitle"><h3>Draft treatment plan</h3><span className={`tag ${agent ? 'agent' : ''}`}>{agent ? 'Agent draft' : 'Drafted by Léa, by hand'}</span></div>
           <div className="rows">
             {patient.plan.map((p) => (
               <div className="row" key={p.tooth}>
@@ -53,8 +56,16 @@ export default function ValidatePlan({ patient, pms, dispatch }) {
             <button className="b primary" onClick={() => dispatch({ type: 'VALIDATE' })}>Validate plan</button>
             <button className="b" onClick={() => dispatch({ type: 'GO', step: 5 })}>Later</button>
           </div>
+          {monitored.length > 0 && (
+            <div className={has(version, 'recall') ? 'task' : 'hint'}>
+              {has(version, 'recall')
+                ? `Recall set: the agent will invite Mrs Martin back in 6 months to check tooth ${monitored.map((p) => p.tooth).join(', ')}.`
+                : `Monitored teeth are not followed up yet. Recall arrives in V3.`}
+            </div>
+          )}
           <div className="hint">
-            {pms.integrated
+            {!agent ? 'In V0 there is no agent: Léa from Allisone ops drafts this from the report, by hand, to test the value first. '
+            : pms.integrated
               ? `Once validated, the agent writes the plan into ${pms.name} and checks it. Nobody retypes it.`
               : `${pms.name} has no API: once validated, the agent prepares the plan for Camille to paste in 20 seconds.`}
             {' '}Change any act and the quote updates on its own.

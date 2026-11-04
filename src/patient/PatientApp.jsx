@@ -3,6 +3,7 @@ import Xray from '../components/Xray.jsx';
 import { ACTS } from '../domain/acts.js';
 import { buildQuote, visitPlan, euro } from '../domain/quote.js';
 import { REASONS } from '../domain/cases.js';
+import { has } from '../domain/versions.js';
 
 // What Mrs Martin sees on her phone after tapping the SMS link.
 // Every action dispatches to the same state as the practice side, so the board updates live.
@@ -30,7 +31,8 @@ const EXPLAIN = {
 
 const fmt = (c) => euro(c).replace('.00', '');
 
-export default function PatientApp({ patient, pms, dispatch }) {
+export default function PatientApp({ patient, pms, version, dispatch }) {
+  const self = has(version, 'selfBooking');
   const [screen, setScreen] = useState('sms');
   const [tooth, setTooth] = useState(null);
   const [slot, setSlot] = useState(0);
@@ -119,7 +121,7 @@ export default function PatientApp({ patient, pms, dispatch }) {
               <div className="pt-actions">
                 <button className="b primary full" onClick={() => go('slots')}>Accept and choose a date</button>
                 <button className="b full" onClick={() => go('question')}>I have a question</button>
-                <button className="linklike center" onClick={() => go('notnow')}>Not now</button>
+                {has(version, 'reasons') && <button className="linklike center" onClick={() => go('notnow')}>Not now</button>}
               </div>
             )}
           </div>
@@ -155,7 +157,7 @@ export default function PatientApp({ patient, pms, dispatch }) {
             </div>
             <p className="pt-note">We will plan the crown visits with you after this one.</p>
             <button className="b primary full" onClick={() => { dispatch({ type: 'PATIENT_REQUEST_SLOT', slot: `${SLOTS[slot].day} ${SLOTS[slot].time}`, pms: pms.name }); go('done'); }}>
-              Accept the quote and ask for this date
+              {self ? 'Accept the quote and book this date' : 'Accept the quote and ask for this date'}
             </button>
           </div>
         )}
@@ -164,7 +166,7 @@ export default function PatientApp({ patient, pms, dispatch }) {
           <div className="pt-pad pt-center">
             <div className="pt-big-check">✓</div>
             <h3 className="pt-h">Thank you, Mrs Martin</h3>
-            <p className="pt-p">You asked for {requested}. Camille will confirm by SMS within the hour.</p>
+            <p className="pt-p">{booked ? `You are booked for ${patient.slot} with Dr Lefèvre. We will remind you the day before.` : `You asked for ${requested}. Camille will confirm by SMS within the hour.`}</p>
             <button className="b full" onClick={() => go('plan')}>Back to my plan</button>
           </div>
         )}
@@ -215,9 +217,10 @@ export default function PatientApp({ patient, pms, dispatch }) {
             <div className="pt-big-check soft">✓</div>
             <h3 className="pt-h">Thank you</h3>
             <p className="pt-p">
-              {reason === 'cost' && (q.total.patient > 0 ? `We will send you the payment options. You can pay in 3 instalments of ${fmt(Math.ceil(q.total.patient / 3))}.` : 'Good news: with your mutuelle there is nothing left for you to pay. Camille will call to go through it with you.')}
-              {reason === 'second' && 'We will send you your X-ray and report so you can share them.'}
-              {(reason === 'think' || reason === 'timing') && 'Your plan stays here. We will check in with you in a few days.'}
+              {!has(version, 'tailoredFollowUp') && 'Your plan stays here. We will check in with you in a few days.'}
+              {has(version, 'tailoredFollowUp') && reason === 'cost' && (q.total.patient > 0 ? `We will send you the payment options. You can pay in 3 instalments of ${fmt(Math.ceil(q.total.patient / 3))}.` : 'Good news: with your mutuelle there is nothing left for you to pay. Camille will call to go through it with you.')}
+              {has(version, 'tailoredFollowUp') && reason === 'second' && 'We will send you your X-ray and report so you can share them.'}
+              {has(version, 'tailoredFollowUp') && (reason === 'think' || reason === 'timing') && 'Your plan stays here. We will check in with you in a few days.'}
             </p>
             <button className="b full" onClick={() => go('plan')}>Back to my plan</button>
           </div>

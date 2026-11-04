@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer } from 'react';
 import { initialState, reducer, STEPS, PEOPLE, getMartin } from './domain/cases.js';
 import { PMS } from './pms/adapters.js';
-import Rail from './components/Rail.jsx';
+import Rail, { stepLabel } from './components/Rail.jsx';
 import ValidatePlan from './screens/ValidatePlan.jsx';
 import WriteToPms from './screens/WriteToPms.jsx';
 import ApproveQuote from './screens/ApproveQuote.jsx';
@@ -10,6 +10,7 @@ import Booking from './screens/Booking.jsx';
 import PracticeBoard from './screens/PracticeBoard.jsx';
 import PatientApp from './patient/PatientApp.jsx';
 import BehindTheScenes from './components/BehindTheScenes.jsx';
+import VersionBar from './components/VersionBar.jsx';
 
 const VIEWS = [
   { id: 'practice', label: 'Practice' },
@@ -22,7 +23,7 @@ const SCREENS = [ValidatePlan, WriteToPms, ApproveQuote, PatientView, Booking, P
 export default function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const step = STEPS[state.step];
-  const person = PEOPLE[step.who];
+  const person = PEOPLE[state.version === 0 && step.who === 'agent' ? 'ops' : step.who];
   const patient = getMartin(state);
   const Screen = SCREENS[state.step];
 
@@ -50,7 +51,7 @@ export default function App() {
         <label className="pms-switch">
           <span className="note">Practice software</span>
           <select id="pms" value={state.pms} onChange={(e) => dispatch({ type: 'SET_PMS', pms: e.target.value })}>
-            {Object.values(PMS).map((p) => (
+            {Object.values(PMS).filter((p) => p.since <= state.version).map((p) => (
               <option key={p.id} value={p.id}>{p.name} · {p.tagline}</option>
             ))}
           </select>
@@ -58,9 +59,11 @@ export default function App() {
         </div>
       </header>
 
+      <VersionBar version={state.version} onPick={(v) => dispatch({ type: 'SET_VERSION', version: v })} />
+
       {state.view === 'patient' && (
         <div className="patient-layout">
-          <PatientApp patient={patient} pms={PMS[state.pms]} dispatch={dispatch} />
+          <PatientApp patient={patient} pms={PMS[state.pms]} version={state.version} dispatch={dispatch} />
           <BehindTheScenes state={state} patient={patient} pms={PMS[state.pms]} />
         </div>
       )}
@@ -73,16 +76,16 @@ export default function App() {
               <div className="who"><span className="avatar">CA</span><span><b>Camille</b> <span className="note">· Dental assistant</span></span></div>
             </div>
             <div className="screen">
-              <PracticeBoard state={state} patient={patient} pms={PMS[state.pms]} dispatch={dispatch} compact />
+              <PracticeBoard state={state} patient={patient} pms={PMS[state.pms]} version={state.version} dispatch={dispatch} compact />
             </div>
           </main>
-          <PatientApp patient={patient} pms={PMS[state.pms]} dispatch={dispatch} />
+          <PatientApp patient={patient} pms={PMS[state.pms]} version={state.version} dispatch={dispatch} />
         </div>
       )}
 
 
       {state.view === 'practice' && <div className="layout">
-        <Rail current={state.step} pms={PMS[state.pms]} onGo={(i) => dispatch({ type: 'GO', step: i })} />
+        <Rail current={state.step} pms={PMS[state.pms]} version={state.version} onGo={(i) => dispatch({ type: 'GO', step: i })} />
         <main className="stage">
           <div className="bar">
             <div className="crumbs">
@@ -95,8 +98,8 @@ export default function App() {
             </div>
           </div>
           <div className="screen">
-            <h2>{step.title}</h2>
-            <Screen state={state} patient={patient} pms={PMS[state.pms]} dispatch={dispatch} />
+            <h2>{stepLabel(state.step, state.version, PMS[state.pms])[0]}</h2>
+            <Screen state={state} patient={patient} pms={PMS[state.pms]} version={state.version} dispatch={dispatch} />
           </div>
         </main>
       </div>}
