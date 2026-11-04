@@ -55,6 +55,12 @@ Simulated: the PMS writes, SMS and email sending, and the X-ray analysis.
 
 Try it: change tooth 46 to "Metal ceramic crown" in step 1 and the patient's share goes from €0 to €350. Switch the practice software to PMS A to see the no API path.
 
+## Live demo
+
+https://lemming97.github.io/Follow-Through-Agent-prototype/
+
+Every push to `main` runs the tests and redeploys it (`.github/workflows/deploy.yml`).
+
 ## Run it
 
 ```bash
