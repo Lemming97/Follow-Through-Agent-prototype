@@ -9,7 +9,8 @@ const SLOTS = [
 
 export default function Booking({ patient, pms, dispatch }) {
   const visits = visitPlan(patient.plan);
-  const [sel, setSel] = useState(1);
+  const asked = SLOTS.findIndex((s) => `${s.day} ${s.time}` === patient.requestedSlot);
+  const [sel, setSel] = useState(asked >= 0 ? asked : 1);
   if (!visits.length) return <p className="note">Nothing to book: the validated plan has no treatment.</p>;
   const first = visits[0];
   return (
@@ -19,7 +20,7 @@ export default function Booking({ patient, pms, dispatch }) {
         <div className="ptitle"><h3>{patient.name} · {visits.length} visit{visits.length > 1 ? 's' : ''} to book</h3>
           <span className={`tag ${patient.status === 'accepted' || patient.status === 'booked' ? 'good' : ''}`}>{patient.status === 'booked' ? 'Booked' : patient.status === 'accepted' ? 'Quote accepted' : 'Waiting for acceptance'}</span>
         </div>
-        <div className="note">She asked for late afternoons. Visit 1: {first.label.toLowerCase()}, {first.minutes} min with Dr Lefèvre.</div>
+        <div className="note">{patient.requestedSlot ? `She asked for ${patient.requestedSlot} from her phone. ` : 'She asked for late afternoons. '} Visit 1: {first.label.toLowerCase()}, {first.minutes} min with Dr Lefèvre.</div>
         <div className="slots">
           {SLOTS.map((s, i) => (
             <button key={s.day} className={`slot ${i === sel ? 'sel' : ''}`} aria-pressed={i === sel} onClick={() => setSel(i)}>

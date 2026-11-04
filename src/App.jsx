@@ -8,6 +8,14 @@ import ApproveQuote from './screens/ApproveQuote.jsx';
 import PatientView from './screens/PatientView.jsx';
 import Booking from './screens/Booking.jsx';
 import PracticeBoard from './screens/PracticeBoard.jsx';
+import PatientApp from './patient/PatientApp.jsx';
+import BehindTheScenes from './components/BehindTheScenes.jsx';
+
+const VIEWS = [
+  { id: 'practice', label: 'Practice' },
+  { id: 'patient', label: 'Patient' },
+  { id: 'split', label: 'Side by side' },
+];
 
 const SCREENS = [ValidatePlan, WriteToPms, ApproveQuote, PatientView, Booking, PracticeBoard];
 
@@ -33,6 +41,12 @@ export default function App() {
           <h1>Follow-Through Agent</h1>
           <div className="note">Concept prototype for a product case study. Fictional patient and practice, 2026 French fees.</div>
         </div>
+        <div className="controls">
+        <div className="seg" role="group" aria-label="View">
+          {VIEWS.map((v) => (
+            <button key={v.id} className={state.view === v.id ? 'on' : ''} aria-pressed={state.view === v.id} onClick={() => dispatch({ type: 'SET_VIEW', view: v.id })}>{v.label}</button>
+          ))}
+        </div>
         <label className="pms-switch">
           <span className="note">Practice software</span>
           <select id="pms" value={state.pms} onChange={(e) => dispatch({ type: 'SET_PMS', pms: e.target.value })}>
@@ -41,9 +55,33 @@ export default function App() {
             ))}
           </select>
         </label>
+        </div>
       </header>
 
-      <div className="layout">
+      {state.view === 'patient' && (
+        <div className="patient-layout">
+          <PatientApp patient={patient} pms={PMS[state.pms]} dispatch={dispatch} />
+          <BehindTheScenes state={state} patient={patient} pms={PMS[state.pms]} />
+        </div>
+      )}
+
+      {state.view === 'split' && (
+        <div className="split-layout">
+          <main className="stage">
+            <div className="bar">
+              <div className="crumbs"><b>Practice · Treatment follow up</b></div>
+              <div className="who"><span className="avatar">CA</span><span><b>Camille</b> <span className="note">· Dental assistant</span></span></div>
+            </div>
+            <div className="screen">
+              <PracticeBoard state={state} patient={patient} pms={PMS[state.pms]} dispatch={dispatch} compact />
+            </div>
+          </main>
+          <PatientApp patient={patient} pms={PMS[state.pms]} dispatch={dispatch} />
+        </div>
+      )}
+
+
+      {state.view === 'practice' && <div className="layout">
         <Rail current={state.step} pms={PMS[state.pms]} onGo={(i) => dispatch({ type: 'GO', step: i })} />
         <main className="stage">
           <div className="bar">
@@ -61,7 +99,7 @@ export default function App() {
             <Screen state={state} patient={patient} pms={PMS[state.pms]} dispatch={dispatch} />
           </div>
         </main>
-      </div>
+      </div>}
 
       <footer>Built with React. The quote engine, visit sequence and PMS adapters are real code; PMS writes and messages are simulated.</footer>
       {state.toast && <div className="toast" role="status">{state.toast}</div>}
