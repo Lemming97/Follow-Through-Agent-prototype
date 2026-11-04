@@ -15,7 +15,7 @@ const LATER = [
   { day: 'Day 14', text: "Added to Camille's call list with a call script" },
 ];
 
-export default function PatientView({ state, patient, dispatch }) {
+export default function PatientView({ state, patient, pms, dispatch }) {
   const q = buildQuote(patient.plan);
   const items = patient.plan.map(plainWords).filter(Boolean);
   const timeline = patient.timeline.length
@@ -51,7 +51,7 @@ export default function PatientView({ state, patient, dispatch }) {
           {state.tasks.length > 0 && (
             <div className="task"><span className="tag warn">Task for Camille</span> {state.tasks.at(-1).text} · {state.tasks.at(-1).due}</div>
           )}
-          <div className="hint">If she taps "I have a question", the agent does not answer clinical questions. It creates a call back task for the assistant.</div>
+          <div className="hint">Follow up runs the same on any PMS: it lives in Allisone, not in {pms.name}. If she taps "I have a question", the agent does not answer clinical questions. It creates a call back task for the assistant.</div>
         </section>
       </div>
     </>

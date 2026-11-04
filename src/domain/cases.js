@@ -76,7 +76,13 @@ export function reducer(state, action) {
     case 'GO':
       return { ...state, step: action.step };
     case 'SET_PMS':
-      return { ...state, pms: action.pms };
+      return {
+        ...state,
+        pms: action.pms,
+        toast: action.pms === 'B'
+          ? 'PMS B: the agent writes the plan into the PMS and checks it'
+          : 'PMS A: no API, so the agent prepares a copy pack for Camille to paste',
+      };
     case 'SET_ACT':
       return updateMartin(state, (c) => ({
         plan: c.plan.map((p) => (p.tooth === action.tooth ? { ...p, act: action.act } : p)),

@@ -44,10 +44,13 @@ export default function App() {
       </header>
 
       <div className="layout">
-        <Rail current={state.step} onGo={(i) => dispatch({ type: 'GO', step: i })} />
+        <Rail current={state.step} pms={PMS[state.pms]} onGo={(i) => dispatch({ type: 'GO', step: i })} />
         <main className="stage">
           <div className="bar">
-            <div className="crumbs"><b>{state.step === 5 ? 'Practice' : patient.name} · {step.crumb}</b></div>
+            <div className="crumbs">
+              <b>{state.step === 5 ? 'Practice' : patient.name} · {step.crumb}</b>
+              <span className={`tag ${PMS[state.pms].integrated ? 'good' : 'warn'} inline`}>{PMS[state.pms].name} · {PMS[state.pms].integrated ? 'integrated' : 'no API'}</span>
+            </div>
             <div className="who">
               <span className="avatar">{person.initials}</span>
               <span><b>{person.name}</b> <span className="note">· {person.role}</span></span>

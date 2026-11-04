@@ -36,6 +36,11 @@ export default function Booking({ patient, pms, dispatch }) {
           <div className="ptitle"><h3>Materials check</h3><span className="tag">Not in V1</span></div>
           <div className="note">Later version: the agent checks materials in stock and suggests a marketplace order. Left out of V1 on purpose.</div>
         </section>
+        <div className={pms.integrated ? 'hint' : 'task'}>
+          {pms.integrated
+            ? `Confirming adds a booking request to ${pms.name}. Camille checks it in the calendar.`
+            : `${pms.name} has no API: Camille enters the slot in the ${pms.name} calendar herself. The agent sends the patient the confirmation.`}
+        </div>
         <div className="btns">
           <button className="b primary" onClick={() => dispatch({ type: 'BOOK', slot: `${SLOTS[sel].day} ${SLOTS[sel].time}` })}>Confirm visit 1</button>
           <button className="b" onClick={() => dispatch({ type: 'GO', step: 5 })}>See practice overview</button>
