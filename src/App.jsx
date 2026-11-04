@@ -1,0 +1,67 @@
+import React, { useEffect, useReducer } from 'react';
+import { initialState, reducer, STEPS, PEOPLE, getMartin } from './domain/cases.js';
+import { PMS } from './pms/adapters.js';
+import Rail from './components/Rail.jsx';
+import ValidatePlan from './screens/ValidatePlan.jsx';
+import WriteToPms from './screens/WriteToPms.jsx';
+import ApproveQuote from './screens/ApproveQuote.jsx';
+import PatientView from './screens/PatientView.jsx';
+import Booking from './screens/Booking.jsx';
+import PracticeBoard from './screens/PracticeBoard.jsx';
+
+const SCREENS = [ValidatePlan, WriteToPms, ApproveQuote, PatientView, Booking, PracticeBoard];
+
+export default function App() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const step = STEPS[state.step];
+  const person = PEOPLE[step.who];
+  const patient = getMartin(state);
+  const Screen = SCREENS[state.step];
+
+  useEffect(() => {
+    if (!state.toast) return;
+    const t = setTimeout(() => dispatch({ type: 'TOAST_CLEAR' }), 2800);
+    return () => clearTimeout(t);
+  }, [state.toast]);
+
+  useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, [state.step]);
+
+  return (
+    <div className="wrap">
+      <header className="top">
+        <div>
+          <h1>Follow-Through Agent</h1>
+          <div className="note">Concept prototype for a product case study. Fictional patient and practice, 2026 French fees.</div>
+        </div>
+        <label className="pms-switch">
+          <span className="note">Practice software</span>
+          <select id="pms" value={state.pms} onChange={(e) => dispatch({ type: 'SET_PMS', pms: e.target.value })}>
+            {Object.values(PMS).map((p) => (
+              <option key={p.id} value={p.id}>{p.name} · {p.tagline}</option>
+            ))}
+          </select>
+        </label>
+      </header>
+
+      <div className="layout">
+        <Rail current={state.step} onGo={(i) => dispatch({ type: 'GO', step: i })} />
+        <main className="stage">
+          <div className="bar">
+            <div className="crumbs"><b>{state.step === 5 ? 'Practice' : patient.name} · {step.crumb}</b></div>
+            <div className="who">
+              <span className="avatar">{person.initials}</span>
+              <span><b>{person.name}</b> <span className="note">· {person.role}</span></span>
+            </div>
+          </div>
+          <div className="screen">
+            <h2>{step.title}</h2>
+            <Screen state={state} patient={patient} pms={PMS[state.pms]} dispatch={dispatch} />
+          </div>
+        </main>
+      </div>
+
+      <footer>Built with React. The quote engine, visit sequence and PMS adapters are real code; PMS writes and messages are simulated.</footer>
+      {state.toast && <div className="toast" role="status">{state.toast}</div>}
+    </div>
+  );
+}

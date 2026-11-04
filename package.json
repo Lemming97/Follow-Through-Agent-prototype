@@ -1,0 +1,24 @@
+{
+  "name": "follow-through-agent",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Concept prototype: an agent that takes a dental practice from diagnosis to booked treatment.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:single": "vite build --mode single && node scripts/to-artifact.mjs",
+    "preview": "vite preview",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "4.3.4",
+    "vite": "5.4.11",
+    "vite-plugin-singlefile": "2.0.3",
+    "vitest": "2.1.8"
+  }
+}
