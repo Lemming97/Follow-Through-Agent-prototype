@@ -3,7 +3,7 @@ import Xray from '../components/Xray.jsx';
 import { ACTS, OPTIONS } from '../domain/acts.js';
 import { visitPlan } from '../domain/quote.js';
 
-export default function ValidatePlan({ patient, dispatch }) {
+export default function ValidatePlan({ patient, pms, dispatch }) {
   const visits = visitPlan(patient.plan);
   const changed = (p) => (p.kind === 'caries' ? !p.act.startsWith('comp') : p.act !== 'crownZr');
   return (
@@ -53,7 +53,12 @@ export default function ValidatePlan({ patient, dispatch }) {
             <button className="b primary" onClick={() => dispatch({ type: 'VALIDATE' })}>Validate plan</button>
             <button className="b" onClick={() => dispatch({ type: 'GO', step: 5 })}>Later</button>
           </div>
-          <div className="hint">The agent never adds an act the dentist did not see. Change any act: the quote and the patient's price update on their own.</div>
+          <div className="hint">
+            {pms.integrated
+              ? `Once validated, the agent writes the plan into ${pms.name} and checks it. Nobody retypes it.`
+              : `${pms.name} has no API: once validated, the agent prepares the plan for Camille to paste in 20 seconds.`}
+            {' '}Change any act and the quote updates on its own.
+          </div>
         </section>
       </div>
     </>
