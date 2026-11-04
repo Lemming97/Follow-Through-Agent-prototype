@@ -1,4 +1,6 @@
 import { visitPlan } from './quote.js';
+import { has, VERSIONS } from './versions.js';
+import { PMS } from '../pms/adapters.js';
 
 export const STEPS = [
   { title: 'Validate the plan', who: 'dentist', crumb: 'Consultation' },
@@ -14,6 +16,7 @@ export const PEOPLE = {
   assistant: { initials: 'CA', name: 'Camille', role: 'Dental assistant' },
   patient: { initials: 'MM', name: 'Mrs Martin', role: 'Patient, on her phone' },
   agent: { initials: 'AG', name: 'Agent', role: 'Running in the background' },
+  ops: { initials: 'LA', name: 'Léa', role: 'Allisone ops, V0 concierge' },
 };
 
 export const BOARD_COLUMNS = [
@@ -63,6 +66,7 @@ export const initialState = {
   tasks: [],
   toast: null,
   view: 'practice', // practice | patient | split
+  version: 1, // roadmap version shown, V0 to V4
   log: [],
   // Why patients wait, last 30 days. Seeded for the demo; the patient's "Not now" answer adds to it.
   reasons: { cost: 5, think: 3, timing: 2, second: 1 },
@@ -76,7 +80,11 @@ export const REASONS = {
 };
 
 const stamp = () => new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-const withLog = (state, text) => ({ ...state, log: [{ id: state.log.length + 1, at: stamp(), text }, ...state.log] });
+// In V0 there is no agent: Léa from Allisone ops does the work by hand.
+const withLog = (state, text) => ({
+  ...state,
+  log: [{ id: state.log.length + 1, at: stamp(), text: state.version === 0 ? `Léa (Allisone ops), by hand: ${text[0].toLowerCase()}${text.slice(1)}` : text }, ...state.log],
+});
 
 const updateMartin = (state, fn) => ({
   ...state,
@@ -105,6 +113,11 @@ export function reducer(state, action) {
       return { ...updateMartin(state, () => ({ status: 'to_approve', note: 'Plan validated 09:41' })), step: 1, toast: 'Plan validated by Dr Lefèvre' };
     case 'PMS_DONE':
       return updateMartin(state, () => ({ note: state.pms === 'B' ? 'Written to PMS B, verified' : 'Copy pack pasted in PMS A' }));
+    case 'SET_VERSION': {
+      const pms = PMS[state.pms].since <= action.version ? state.pms : 'B';
+      const v = VERSIONS[action.version];
+      return { ...initialState, view: state.view, version: action.version, pms, toast: `${v.name} · ${v.title}` };
+    }
     case 'SET_VIEW':
       return { ...state, view: action.view };
     case 'SEND_QUOTE':
@@ -132,6 +145,19 @@ export function reducer(state, action) {
         toast: 'Camille will call you back today',
       }, `Question about ${action.topic || 'the plan'}: no clinical answer from the agent, call back task created for Camille`);
     case 'PATIENT_REQUEST_SLOT':
+      if (has(state.version, 'selfBooking')) {
+        return withLog({
+          ...updateMartin(state, (c) => ({
+            status: 'booked',
+            note: `Visit 1 · ${action.slot}`,
+            slot: action.slot,
+            requestedSlot: action.slot,
+            timeline: [...c.timeline, { day: 'Day 4', text: `Accepted and booked ${action.slot} herself`, done: true }],
+          })),
+          tasks: state.tasks.filter((t) => !t.text.includes('Mrs Martin')),
+          toast: 'Mrs Martin booked her visit herself',
+        }, `Quote accepted. She booked ${action.slot} herself, written straight into the ${action.pms} calendar`);
+      }
       return withLog({
         ...updateMartin(state, (c) => ({
           status: 'accepted',
@@ -150,11 +176,13 @@ export function reducer(state, action) {
           timeline: [...c.timeline, { day: 'Day 4', text: `Said not now: ${REASONS[action.reason].toLowerCase()}`, done: true }],
         })),
         reasons: { ...state.reasons, [action.reason]: state.reasons[action.reason] + 1 },
-        tasks: action.reason === 'cost' && !action.patientShare
+        tasks: has(state.version, 'tailoredFollowUp') && action.reason === 'cost' && !action.patientShare
           ? [...state.tasks, { id: Date.now(), text: 'Call Mrs Martin: she thinks it is too expensive, but her mutuelle covers it all', due: 'Today' }]
           : state.tasks,
         toast: 'Answer recorded',
-      }, action.reason === 'cost'
+      }, !has(state.version, 'tailoredFollowUp')
+        ? `Reason logged: ${REASONS[action.reason].toLowerCase()}. Standard day 10 reminder kept`
+        : action.reason === 'cost'
         ? action.patientShare > 0
           ? 'Reason logged: cost. Day 10 reminder will offer payment in 3 instalments'
           : 'Reason logged: cost, but she has nothing to pay. Call back task: explain her mutuelle covers it'
@@ -179,6 +207,8 @@ export function reducer(state, action) {
         step: 5,
         toast: `Visit 1 booked for ${action.slot}. Confirmation sent.`,
       }, `Visit 1 confirmed for ${action.slot}. Confirmation SMS sent, reminder set for the day before`);
+    case 'TOAST':
+      return { ...state, toast: action.text };
     case 'TOAST_CLEAR':
       return { ...state, toast: null };
     case 'RESET':

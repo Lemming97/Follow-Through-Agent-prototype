@@ -1,7 +1,16 @@
 import React from 'react';
 import { BOARD_COLUMNS, REASONS } from '../domain/cases.js';
+import { has } from '../domain/versions.js';
 
-export default function PracticeBoard({ state, pms, dispatch, compact }) {
+// Fictional practices in one dental group, for the V4 view.
+const GROUP = [
+  { name: 'Paris 11e (this practice)', pms: 'PMS B', entered: 85, treated: 27 },
+  { name: 'Lyon Part-Dieu', pms: 'PMS C', entered: 82, treated: 26 },
+  { name: 'Bordeaux Centre', pms: 'PMS A', entered: 74, treated: 23 },
+  { name: 'Lille Vauban', pms: 'PMS E', entered: 88, treated: 29 },
+];
+
+export default function PracticeBoard({ state, pms, version, dispatch, compact }) {
   const totalReasons = Object.values(state.reasons).reduce((a, b) => a + b, 0);
   return (
     <>
@@ -12,7 +21,7 @@ export default function PracticeBoard({ state, pms, dispatch, compact }) {
         <div className="kpi"><div className="v">{pms.integrated ? '€1,420' : '€945'}</div><div className="l">Extra treatment fees this month, per dentist</div></div>
         <div className="kpi"><div className="v">{pms.integrated ? '55 min' : '1 h 05'}</div><div className="l">Assistant time a day on follow up, from 2 h</div></div>
       </div>
-      <div className="note">{pms.integrated ? 'PMS B pilot targets' : 'PMS A estimate: lower than PMS B because pasting still depends on the assistant'}, shown as example results, not real data. The board below is live: Mrs Martin moves as you go through the journey.</div>
+      <div className="note">{version === 0 ? 'V0 concierge target on 5 practices, measured by hand' : pms.integrated ? `${pms.name} pilot targets` : 'PMS A estimate: lower than PMS B because pasting still depends on the assistant'}, shown as example results, not real data. The board below is live: Mrs Martin moves as you go through the journey.</div>
       <div className="board">
         {BOARD_COLUMNS.map((col) => {
           const cs = state.cases.filter((c) => c.status === col.id);
@@ -28,7 +37,19 @@ export default function PracticeBoard({ state, pms, dispatch, compact }) {
           );
         })}
       </div>
-      <section className="panel">
+      {has(version, 'groups') && (
+        <section className="panel">
+          <div className="ptitle"><h3>Across the group</h3><span className="tag good">V4</span></div>
+          <div className="tbl"><table>
+            <thead><tr><th>Practice</th><th>Software</th><th className="r">Entered in PMS</th><th className="r">Treated per 100</th></tr></thead>
+            <tbody>{GROUP.map((g) => (
+              <tr key={g.name}><td>{g.name}</td><td>{g.pms}</td><td className="r">{g.entered}%</td><td className="r">{g.treated}</td></tr>
+            ))}</tbody>
+          </table></div>
+          <div className="hint">Example figures. The group sees which practices convert best and why, and Bordeaux on PMS A shows the gap an integration closes.</div>
+        </section>
+      )}
+      {has(version, 'reasons') && <section className="panel">
         <div className="ptitle"><h3>Why patients wait</h3><span className="tag">Last 30 days · {totalReasons} answers</span></div>
         <div className="reasons">
           {Object.entries(REASONS).map(([id, label]) => (
@@ -40,7 +61,7 @@ export default function PracticeBoard({ state, pms, dispatch, compact }) {
           ))}
         </div>
         <div className="hint">Collected from the "Not now" button on the patient's phone. This fills the "reasons behind each drop" gap in today's data.</div>
-      </section>
+      </section>}
       {state.tasks.length > 0 && (
         <section className="panel">
           <div className="ptitle"><h3>Camille's tasks</h3><span className="tag warn">{state.tasks.length} open</span></div>

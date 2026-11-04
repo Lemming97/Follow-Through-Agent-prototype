@@ -11,6 +11,7 @@ export const PMS = {
     id: 'B',
     name: 'PMS B',
     tagline: 'Partner API, write access',
+    since: 0,
     integrated: true,
     writeSteps: (patient) => [
       `Open ${patient.name}'s patient file`,
@@ -31,6 +32,7 @@ export const PMS = {
     id: 'A',
     name: 'PMS A',
     tagline: 'No API, copy pack',
+    since: 1,
     integrated: false,
     copyPack: (patient) =>
       [
@@ -40,3 +42,7 @@ export const PMS = {
       ].join('\n'),
   },
 };
+
+// Same adapter shape as PMS B: added in V2 once the integrations exist.
+PMS.E = { ...PMS.B, id: 'E', name: 'PMS E', tagline: 'Partner API, from V2', since: 2 };
+PMS.C = { ...PMS.B, id: 'C', name: 'PMS C', tagline: 'New partnership, from V2', since: 2 };

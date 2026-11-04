@@ -222,3 +222,21 @@ button.b.full{width:100%}
 .reason-bar{height:10px;border-radius:5px;background:var(--sunk);overflow:hidden}
 .reason-bar span{display:block;height:100%;background:var(--accent);opacity:.55}
 .reason b{text-align:right;font-variant-numeric:tabular-nums}
+
+/* Roadmap versions */
+.versions{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.versions{grid-template-columns:minmax(0,1fr)}}
+.vtrack{display:grid;grid-template-columns:repeat(5,minmax(96px,1fr));gap:6px;overflow-x:auto}
+.vstep{all:unset;cursor:pointer;display:grid;gap:2px;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--sunk);min-width:0}
+.vstep:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.vstep.past{background:var(--accent-soft);border-color:transparent}
+.vstep.on{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.vstep.on .vwhen,.vstep.on .vtitle{color:var(--surface)}
+.vname{font:700 18px var(--f-display)}
+.vtitle{font-weight:700;font-size:13px;line-height:1.25}
+.vwhen{font:11px var(--f-mono);color:var(--muted)}
+.vdetail{font-size:14px;display:grid;gap:6px}
+.vdetail p{margin:0}
+.vdetail ul{margin:0;padding-left:18px;color:var(--muted);display:grid;gap:2px}
+.vgate{display:flex;flex-wrap:wrap;gap:8px;align-items:center;color:var(--muted)}
+.mat{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;padding:8px 0;border-bottom:1px solid var(--line)}

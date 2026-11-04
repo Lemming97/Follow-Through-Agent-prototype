@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
-export default function WriteToPms({ patient, pms, dispatch }) {
+export default function WriteToPms({ patient, pms, version, dispatch }) {
+  if (version === 0) return <ByHand patient={patient} pms={pms} dispatch={dispatch} />;
   return pms.integrated
     ? <Integrated patient={patient} pms={pms} dispatch={dispatch} />
     : <CopyPack patient={patient} pms={pms} dispatch={dispatch} />;
@@ -74,6 +75,24 @@ function CopyPack({ patient, pms, dispatch }) {
           </div>
         </section>
       </div>
+    </>
+  );
+}
+
+function ByHand({ patient, pms, dispatch }) {
+  const steps = ['Open the patient file in ' + pms.name, 'Type the dental chart and the 3 acts', 'Attach the Allisone report', 'Note the time it took for the pilot log'];
+  const [done, setDone] = useState([]);
+  const toggle = (s) => setDone((d) => (d.includes(s) ? d.filter((x) => x !== s) : [...d, s]));
+  return (
+    <>
+      <p className="why"><b>Why this step:</b> in V0 there is no code yet. Léa from Allisone ops types the plan into {pms.name} for the pilot practice. If treatments go up by 30%, it is worth building the agent.</p>
+      <section className="panel">
+        <div className="ptitle"><h3>Léa's checklist</h3><span className="tag">By hand · about 4 min</span></div>
+        {steps.map((s) => (
+          <label key={s} className="check"><input type="checkbox" id={'v0-' + s.slice(0, 12).replace(/\s/g, '-')} checked={done.includes(s)} onChange={() => toggle(s)} />{s}</label>
+        ))}
+        <div className="btns"><button className="b primary" disabled={done.length < steps.length} onClick={() => { dispatch({ type: 'PMS_DONE' }); dispatch({ type: 'GO', step: 2 }); }}>Continue to quote</button></div>
+      </section>
     </>
   );
 }

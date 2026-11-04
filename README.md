@@ -15,6 +15,18 @@ Out of 100 lesions detected on an X-ray, only 18 end up treated, and 55 are lost
 | 5. Book the visits | Assistant | Slots that respect the treatment sequence (fillings first, crown visits two weeks apart). |
 | 6. Practice overview | Team | A live board of every open case, plus the pilot metrics. |
 
+## Roadmap versions, V0 to V4
+
+The bar under the header switches the whole prototype between versions. Each screen shows what that version really does, from the rules in `src/domain/versions.js`.
+
+| Version | When | What it adds | Gate to the next version |
+| --- | --- | --- | --- |
+| V0 Concierge | Weeks 1 to 4 | No agent. Léa from Allisone ops does the work by hand for 5 PMS B practices. | Treatments per 100 lesions up 30% |
+| V1 Plan, quote, follow up | Weeks 5 to 18 | Agent drafts the plan, writes it to PMS B, prices the quote, sends reminders. People approve the plan, quote and slot. | 95% of plans need no edit, 60% of pilots pay |
+| V2 Earned autonomy | Months 5 to 8 | Quotes send on their own after 4 clean weeks, patients book themselves, follow up tailored to why they wait, PMS E and C. | Quote corrections under 2% in auto mode |
+| V3 Full follow-through | Months 9 to 12 | Materials check and marketplace reorder, mutuelle pre-approval, recall for monitored teeth, UK and Italy. | Accepted to treated above 90% |
+| V4 Groups and voice | Year 2 | Group dashboard and benchmarks, AI voice follow up calls with hand over to a person. | Group retention and seat expansion |
+
 ## The patient side
 
 Use the switch at the top to change view:
@@ -60,7 +72,8 @@ Requires Node 18 or later.
 ```
 src/
   domain/      acts and fees, quote engine and tests, case state
-  pms/         PMS adapters (B integrated, A copy pack)
+  domain/versions.js  the V0 to V4 roadmap and which feature arrives when
+  pms/         PMS adapters (B, E and C integrated, A copy pack)
   patient/     the patient's phone experience
   components/  journey rail, X-ray
   screens/     one file per journey step
