@@ -5,6 +5,8 @@ import { viteSingleFile } from 'vite-plugin-singlefile';
 // `npm run build` makes a normal static site in dist/.
 // `npm run build:single` inlines everything into one HTML file (used for the hosted demo link).
 export default defineConfig(({ mode }) => ({
+  // Relative paths so the site works under github.io/<repo-name>/.
+  base: './',
   plugins: mode === 'single' ? [react(), viteSingleFile()] : [react()],
   build: { outDir: mode === 'single' ? 'dist-single' : 'dist' },
   test: { environment: 'node' },
