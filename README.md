@@ -59,7 +59,7 @@ Try it: change tooth 46 to "Metal ceramic crown" in step 1 and the patient's sha
 
 https://lemming97.github.io/Follow-Through-Agent-prototype/
 
-Every push to `main` runs the tests and rebuilds the site into `docs/` (`.github/workflows/deploy.yml`). Pages serves `main` from the `/docs` folder. Don't edit `docs/` by hand.
+Pages serves `main` from the `/docs` folder. Changes reach `main` only through pull requests, so each pull request runs the tests and rebuilds `docs/` inside the pull request (`.github/workflows/deploy.yml`). Merging publishes the site. Don't edit `docs/` by hand.
 
 ## Run it
 

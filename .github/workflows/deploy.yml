@@ -1,22 +1,25 @@
-name: Deploy to GitHub Pages
+name: Build site in pull requests
 
-# Builds the site into docs/ on main.
-# Pages setting: Source = Deploy from a branch, Branch = main, folder = /docs.
+# The site is served by GitHub Pages from main /docs.
+# main only accepts changes through pull requests, so this workflow
+# rebuilds docs/ inside each pull request. Merging the pull request
+# publishes the site; nothing is ever pushed to main directly.
 on:
-  push:
+  pull_request:
     branches: [main]
-    paths-ignore:
-      - 'docs/**'
-  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
   build:
+    # Only for branches in this repository (forks can't be pushed to).
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -29,7 +32,7 @@ jobs:
           rm -rf docs
           cp -r dist docs
           touch docs/.nojekyll
-      - name: Commit docs/ if it changed
+      - name: Commit docs/ to the pull request if it changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
