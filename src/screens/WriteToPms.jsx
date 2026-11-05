@@ -19,7 +19,7 @@ function Integrated({ patient, pms, dispatch }) {
   const finished = done >= steps.length;
   return (
     <>
-      <p className="why"><b>Why this step:</b> no one retypes the plan. The agent writes it into {pms.name} through the partner API, then reads it back to check it landed correctly.</p>
+      <p className="why"><b>Why this step:</b> no one retypes the plan. The agent writes the approved content into the fields {pms.name} supports, then reads it back to check it landed correctly. If the patient match or the write is uncertain, nothing goes to the patient and a person takes over.</p>
       <div className="cols">
         <section className="panel">
           <div className="ptitle"><h3>Writing to {pms.name}</h3><span className={`tag ${finished ? 'good' : 'agent'}`}>{finished ? 'Verified' : 'In progress'}</span></div>

@@ -17,7 +17,7 @@ export default function PracticeBoard({ state, pms, version, dispatch, compact }
       {!compact && <p className="why"><b>Why this step:</b> the team sees every open treatment in one place, and the practice owner sees the value. This is also the data Allisone needs to prove impact and retention.</p>}
       <div className="kpis">
         <div className="kpi"><div className="v">{pms.integrated ? '85%' : '75%'} <small>from 45%</small></div><div className="l">Lesions entered in {pms.name}, last 30 days</div></div>
-        <div className="kpi"><div className="v">{pms.integrated ? '27' : '24'} <small>from 18</small></div><div className="l">Treatments started per 100 lesions</div></div>
+        <div className="kpi"><div className="v">{pms.integrated ? '27' : '24'} <small>from 18</small></div><div className="l">Treatments done within a month, per 100 lesions</div></div>
         <div className="kpi"><div className="v">{pms.integrated ? '€1,420' : '€945'}</div><div className="l">Extra treatment fees this month, per dentist</div></div>
         <div className="kpi"><div className="v">{pms.integrated ? '55 min' : '1 h 05'}</div><div className="l">Assistant time a day on follow up, from 2 h</div></div>
       </div>
