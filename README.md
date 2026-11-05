@@ -22,8 +22,8 @@ The bar under the header switches the whole prototype between versions. Each scr
 | Version | When | What it adds | Gate to the next version |
 | --- | --- | --- | --- |
 | V0 Concierge | Weeks 1 to 4 | No agent. Léa from Allisone ops does the work by hand for 5 PMS B practices. | Plans entered faster, staff time saved |
-| V1 Plan, quote, follow up | Weeks 5 to 18 | Agent drafts the plan, writes it to PMS B and E, prices the quote, sends reminders. People approve the plan, quote and slot. | 95% of plans need no edit, 60% of pilots pay |
-| V2 Earned autonomy | Months 5 to 8 | Quotes send on their own after 4 clean weeks, patients book themselves, follow up tailored to why they wait, PMS C. | Quote corrections under 2% in auto mode |
+| V1 Plan, quote, follow up | Weeks 5 to 18 | Agent drafts the plan, writes it to PMS B and E, prices the quote, sends reminders. People approve the plan, quote and slot. | 95% of plans need no edit, 60% of pilots stay on paid |
+| V2 Earned autonomy | Months 5 to 8 | Quotes send on their own once quality and safety gates are met, patients book themselves, follow up tailored to why they wait, PMS C. | Quote corrections under 2% in auto mode |
 | V3 Full follow-through | Months 9 to 12 | Materials check and marketplace reorder, mutuelle pre-approval, recall for monitored teeth, UK and Italy. | Accepted to treated above 90% |
 | V4 Groups and voice | Year 2 | Group dashboard and benchmarks, AI voice follow up calls with hand over to a person. | Group retention and seat expansion |
 

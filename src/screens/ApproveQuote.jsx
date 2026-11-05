@@ -35,7 +35,7 @@ export default function ApproveQuote({ patient, pms, version, dispatch }) {
           <div className="task"><span className="tag good">Sent</span>Mutuelle pre-approval request for the crown sent automatically. Answer usually within 48 hours.</div>
         )}
         {auto && (
-          <div className="hint">This practice earned auto-send after 4 weeks with no quote corrections. Camille sees every quote and can hold any of them.</div>
+          <div className="hint">This practice earned auto-send after enough reviewed quotes with no serious errors. Camille sees every quote and can hold any of them.</div>
         )}
         <div className="ptitle"><h3>Message to the patient</h3><span className="tag">SMS and email</span></div>
         <div className="sms"><div className="from">Cabinet du Dr Lefèvre</div>Hello {patient.name}, here is the plan Dr Lefèvre explained this morning, with your X-ray and your quote. You can accept it and pick your appointments from this link.</div>
