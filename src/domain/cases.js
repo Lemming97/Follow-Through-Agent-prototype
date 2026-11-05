@@ -101,9 +101,11 @@ export function reducer(state, action) {
       return {
         ...state,
         pms: action.pms,
-        toast: action.pms === 'B'
-          ? 'PMS B: the agent writes the plan into the PMS and checks it'
-          : 'PMS A: no API, so the agent prepares a copy pack for Camille to paste',
+        toast: action.pms === 'A'
+          ? 'PMS A: no API, so the agent prepares a copy pack for Camille to paste'
+          : action.pms === 'B'
+            ? 'PMS B: the agent writes the plan into the PMS and checks it'
+            : `PMS ${action.pms}: same write access as PMS B, so the journey is identical`,
       };
     case 'SET_ACT':
       return updateMartin(state, (c) => ({

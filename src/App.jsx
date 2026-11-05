@@ -60,6 +60,7 @@ export default function App() {
       </header>
 
       <VersionBar version={state.version} onPick={(v) => dispatch({ type: 'SET_VERSION', version: v })} />
+      {PMS[state.pms].note && <div className="task pms-note"><span className="tag good">{PMS[state.pms].name}</span>{PMS[state.pms].note}</div>}
 
       {state.view === 'patient' && (
         <div className="patient-layout">

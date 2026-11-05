@@ -44,5 +44,7 @@ export const PMS = {
 };
 
 // Same adapter shape as PMS B. E is a partner like B (V1); C needs a new partnership (V2).
-PMS.E = { ...PMS.B, id: 'E', name: 'PMS E', tagline: 'Partner API, write access', since: 1 };
-PMS.C = { ...PMS.B, id: 'C', name: 'PMS C', tagline: 'New partnership, from V2', since: 2 };
+PMS.E = { ...PMS.B, id: 'E', name: 'PMS E', tagline: 'Partner API, write access', since: 1,
+  sameAs: 'B', note: 'PMS E has the same partner write access as PMS B, so the journey is identical. Only the adapter changes: that is the point of one shared agent with an adapter per PMS.' };
+PMS.C = { ...PMS.B, id: 'C', name: 'PMS C', tagline: 'New partnership, from V2', since: 2,
+  sameAs: 'B', note: 'PMS C behaves like PMS B once the V2 partnership gives it write access. Until then, its practices get the copy pack, like PMS A.' };
