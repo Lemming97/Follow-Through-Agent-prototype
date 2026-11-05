@@ -43,6 +43,6 @@ export const PMS = {
   },
 };
 
-// Same adapter shape as PMS B: added in V2 once the integrations exist.
-PMS.E = { ...PMS.B, id: 'E', name: 'PMS E', tagline: 'Partner API, from V2', since: 2 };
+// Same adapter shape as PMS B. E is a partner like B (V1); C needs a new partnership (V2).
+PMS.E = { ...PMS.B, id: 'E', name: 'PMS E', tagline: 'Partner API, write access', since: 1 };
 PMS.C = { ...PMS.B, id: 'C', name: 'PMS C', tagline: 'New partnership, from V2', since: 2 };

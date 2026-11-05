@@ -5,20 +5,20 @@ export const VERSIONS = [
   {
     id: 0, name: 'V0', title: 'Concierge', when: 'Weeks 1 to 4',
     summary: 'No agent yet. Léa from Allisone ops does the agent\'s job by hand for 5 PMS B practices.',
-    gate: 'Treatments per 100 lesions up 30%',
+    gate: 'Plans entered faster, staff time saved',
     adds: ['Plans entered, quotes drafted and reminders sent by hand', 'Proves the value before writing code'],
   },
   {
     id: 1, name: 'V1', title: 'Plan, quote, follow up', when: 'Weeks 5 to 18',
     summary: 'The agent drafts and writes. People approve the plan, the quote and the slot.',
     gate: '95% of plans need no edit, 60% of pilots pay',
-    adds: ['Agent drafts the plan and writes it to PMS B', 'Quote priced automatically, approved by the assistant', 'Reminders on day 3 and 10, call list on day 14', 'Patient says why when she waits'],
+    adds: ['Agent drafts the plan and writes it to PMS B and E', 'Quote priced automatically, approved by the assistant', 'Reminders on day 3 and 10, call list on day 14', 'Patient says why when she waits'],
   },
   {
     id: 2, name: 'V2', title: 'Earned autonomy', when: 'Months 5 to 8',
     summary: 'Practices that trust the agent let it send quotes alone. Patients book themselves.',
     gate: 'Quote corrections under 2% in auto mode',
-    adds: ['Quotes send on their own after 4 clean weeks', 'Patient books straight into the calendar', 'Follow up tailored to why she waits', 'PMS E and PMS C integrated'],
+    adds: ['Quotes send on their own after 4 clean weeks', 'Patient books straight into the calendar', 'Follow up tailored to why she waits', 'PMS C integrated'],
   },
   {
     id: 3, name: 'V3', title: 'Full follow-through', when: 'Months 9 to 12',
