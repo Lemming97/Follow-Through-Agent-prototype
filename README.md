@@ -59,7 +59,7 @@ Try it: change tooth 46 to "Metal ceramic crown" in step 1 and the patient's sha
 
 https://lemming97.github.io/Follow-Through-Agent-prototype/
 
-Every push to `main` runs the tests, builds the site and publishes it to the `gh-pages` branch (`.github/workflows/deploy.yml`). Pages is set to deploy from that branch.
+Every push to `main` runs the tests and rebuilds the site into `docs/` (`.github/workflows/deploy.yml`). Pages serves `main` from the `/docs` folder. Don't edit `docs/` by hand.
 
 ## Run it
 
